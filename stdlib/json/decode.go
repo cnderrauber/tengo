@@ -204,7 +204,7 @@ func (d *decodeState) literal() (tengo.Object, error) {
 		if !ok {
 			panic(phasePanicMsg)
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 
 	default: // number
 		if c != '-' && (c < '0' || c > '9') {

@@ -135,12 +135,12 @@ func (b *Bytecode) RemoveDuplicates() {
 				indexMap[curIdx] = newIdx
 				deduped = append(deduped, c)
 			}
-		case *String:
-			if newIdx, ok := strings[c.Value]; ok {
+		case String:
+			if newIdx, ok := strings[string(c)]; ok {
 				indexMap[curIdx] = newIdx
 			} else {
 				newIdx = len(deduped)
-				strings[c.Value] = newIdx
+				strings[string(c)] = newIdx
 				indexMap[curIdx] = newIdx
 				deduped = append(deduped, c)
 			}
@@ -271,8 +271,8 @@ func updateConstIndexes(insts []byte, indexMap map[int]int) {
 }
 
 func inferModuleName(mod *ImmutableMap) string {
-	if modName, ok := mod.Value["__module_name__"].(*String); ok {
-		return modName.Value
+	if modName, ok := mod.Value["__module_name__"].(String); ok {
+		return string(modName)
 	}
 	return ""
 }
@@ -291,7 +291,7 @@ func init() {
 	gob.Register(&ImmutableMap{})
 	gob.Register(&Int{})
 	gob.Register(&Map{})
-	gob.Register(&String{})
+	gob.Register(String(""))
 	gob.Register(&Time{})
 	gob.Register(&Undefined{})
 	gob.Register(&UserFunction{})

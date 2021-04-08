@@ -28,7 +28,7 @@ func fmtPrintf(args ...tengo.Object) (ret tengo.Object, err error) {
 		return nil, tengo.ErrWrongNumArguments
 	}
 
-	format, ok := args[0].(*tengo.String)
+	format, ok := args[0].(tengo.String)
 	if !ok {
 		return nil, tengo.ErrInvalidArgumentType{
 			Name:     "format",
@@ -41,7 +41,7 @@ func fmtPrintf(args ...tengo.Object) (ret tengo.Object, err error) {
 		return nil, nil
 	}
 
-	s, err := tengo.Format(format.Value, args[1:]...)
+	s, err := tengo.Format(string(format), args[1:]...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func fmtSprintf(args ...tengo.Object) (ret tengo.Object, err error) {
 		return nil, tengo.ErrWrongNumArguments
 	}
 
-	format, ok := args[0].(*tengo.String)
+	format, ok := args[0].(tengo.String)
 	if !ok {
 		return nil, tengo.ErrInvalidArgumentType{
 			Name:     "format",
@@ -77,11 +77,11 @@ func fmtSprintf(args ...tengo.Object) (ret tengo.Object, err error) {
 		// okay to return 'format' directly as String is immutable
 		return format, nil
 	}
-	s, err := tengo.Format(format.Value, args[1:]...)
+	s, err := tengo.Format(string(format), args[1:]...)
 	if err != nil {
 		return nil, err
 	}
-	return &tengo.String{Value: s}, nil
+	return tengo.String(s), nil
 }
 
 func getPrintArgs(args ...tengo.Object) ([]interface{}, error) {

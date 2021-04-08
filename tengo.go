@@ -65,8 +65,8 @@ func ToString(o Object) (v string, ok bool) {
 		return
 	}
 	ok = true
-	if str, isStr := o.(*String); isStr {
-		v = str.Value
+	if str, isStr := o.(String); isStr {
+		v = string(str)
 	} else {
 		v = o.String()
 	}
@@ -90,8 +90,8 @@ func ToInt(o Object) (v int, ok bool) {
 			v = 1
 		}
 		ok = true
-	case *String:
-		c, err := strconv.ParseInt(o.Value, 10, 64)
+	case String:
+		c, err := strconv.ParseInt(string(o), 10, 64)
 		if err == nil {
 			v = int(c)
 			ok = true
@@ -117,8 +117,8 @@ func ToInt64(o Object) (v int64, ok bool) {
 			v = 1
 		}
 		ok = true
-	case *String:
-		c, err := strconv.ParseInt(o.Value, 10, 64)
+	case String:
+		c, err := strconv.ParseInt(string(o), 10, 64)
 		if err == nil {
 			v = c
 			ok = true
@@ -136,8 +136,8 @@ func ToFloat64(o Object) (v float64, ok bool) {
 	case *Float:
 		v = o.Value
 		ok = true
-	case *String:
-		c, err := strconv.ParseFloat(o.Value, 64)
+	case String:
+		c, err := strconv.ParseFloat(string(o), 64)
 		if err == nil {
 			v = c
 			ok = true
@@ -172,8 +172,8 @@ func ToByteSlice(o Object) (v []byte, ok bool) {
 	case *Bytes:
 		v = o.Value
 		ok = true
-	case *String:
-		v = []byte(o.Value)
+	case String:
+		v = []byte(o)
 		ok = true
 	}
 	return
@@ -197,8 +197,8 @@ func ToInterface(o Object) (res interface{}) {
 	switch o := o.(type) {
 	case *Int:
 		res = o.Value
-	case *String:
-		res = o.Value
+	case String:
+		res = o
 	case *Float:
 		res = o.Value
 	case *Bool:
@@ -248,7 +248,7 @@ func FromInterface(v interface{}) (Object, error) {
 		if len(v) > MaxStringLen {
 			return nil, ErrStringLimit
 		}
-		return &String{Value: v}, nil
+		return String(v), nil
 	case int64:
 		return &Int{Value: v}, nil
 	case int:
@@ -270,7 +270,7 @@ func FromInterface(v interface{}) (Object, error) {
 		}
 		return &Bytes{Value: v}, nil
 	case error:
-		return &Error{Value: &String{Value: v.Error()}}, nil
+		return &Error{Value: String(v.Error())}, nil
 	case map[string]Object:
 		return &Map{Value: v}, nil
 	case map[string]interface{}:

@@ -37,15 +37,15 @@ func jsonDecode(args ...tengo.Object) (ret tengo.Object, err error) {
 		v, err := json.Decode(o.Value)
 		if err != nil {
 			return &tengo.Error{
-				Value: &tengo.String{Value: err.Error()},
+				Value: tengo.String(err.Error()),
 			}, nil
 		}
 		return v, nil
-	case *tengo.String:
-		v, err := json.Decode([]byte(o.Value))
+	case tengo.String:
+		v, err := json.Decode([]byte(o))
 		if err != nil {
 			return &tengo.Error{
-				Value: &tengo.String{Value: err.Error()},
+				Value: tengo.String(err.Error()),
 			}, nil
 		}
 		return v, nil
@@ -65,7 +65,7 @@ func jsonEncode(args ...tengo.Object) (ret tengo.Object, err error) {
 
 	b, err := json.Encode(args[0])
 	if err != nil {
-		return &tengo.Error{Value: &tengo.String{Value: err.Error()}}, nil
+		return &tengo.Error{Value: tengo.String(err.Error())}, nil
 	}
 
 	return &tengo.Bytes{Value: b}, nil
@@ -100,16 +100,16 @@ func jsonIndent(args ...tengo.Object) (ret tengo.Object, err error) {
 		err := gojson.Indent(&dst, o.Value, prefix, indent)
 		if err != nil {
 			return &tengo.Error{
-				Value: &tengo.String{Value: err.Error()},
+				Value: tengo.String(err.Error()),
 			}, nil
 		}
 		return &tengo.Bytes{Value: dst.Bytes()}, nil
-	case *tengo.String:
+	case tengo.String:
 		var dst bytes.Buffer
-		err := gojson.Indent(&dst, []byte(o.Value), prefix, indent)
+		err := gojson.Indent(&dst, []byte(o), prefix, indent)
 		if err != nil {
 			return &tengo.Error{
-				Value: &tengo.String{Value: err.Error()},
+				Value: tengo.String(err.Error()),
 			}, nil
 		}
 		return &tengo.Bytes{Value: dst.Bytes()}, nil
@@ -132,9 +132,9 @@ func jsonHTMLEscape(args ...tengo.Object) (ret tengo.Object, err error) {
 		var dst bytes.Buffer
 		gojson.HTMLEscape(&dst, o.Value)
 		return &tengo.Bytes{Value: dst.Bytes()}, nil
-	case *tengo.String:
+	case tengo.String:
 		var dst bytes.Buffer
-		gojson.HTMLEscape(&dst, []byte(o.Value))
+		gojson.HTMLEscape(&dst, []byte(o))
 		return &tengo.Bytes{Value: dst.Bytes()}, nil
 	default:
 		return nil, tengo.ErrInvalidArgumentType{

@@ -136,14 +136,14 @@ func builtinTypeName(args ...Object) (Object, error) {
 	if len(args) != 1 {
 		return nil, ErrWrongNumArguments
 	}
-	return &String{Value: args[0].TypeName()}, nil
+	return String(args[0].TypeName()), nil
 }
 
 func builtinIsString(args ...Object) (Object, error) {
 	if len(args) != 1 {
 		return nil, ErrWrongNumArguments
 	}
-	if _, ok := args[0].(*String); ok {
+	if _, ok := args[0].(String); ok {
 		return TrueValue, nil
 	}
 	return FalseValue, nil
@@ -310,8 +310,8 @@ func builtinLen(args ...Object) (Object, error) {
 		return &Int{Value: int64(len(arg.Value))}, nil
 	case *ImmutableArray:
 		return &Int{Value: int64(len(arg.Value))}, nil
-	case *String:
-		return &Int{Value: int64(len(arg.Value))}, nil
+	case String:
+		return &Int{Value: int64(len(arg))}, nil
 	case *Bytes:
 		return &Int{Value: int64(len(arg.Value))}, nil
 	case *Map:
@@ -397,7 +397,7 @@ func builtinFormat(args ...Object) (Object, error) {
 	if numArgs == 0 {
 		return nil, ErrWrongNumArguments
 	}
-	format, ok := args[0].(*String)
+	format, ok := args[0].(String)
 	if !ok {
 		return nil, ErrInvalidArgumentType{
 			Name:     "format",
@@ -409,11 +409,11 @@ func builtinFormat(args ...Object) (Object, error) {
 		// okay to return 'format' directly as String is immutable
 		return format, nil
 	}
-	s, err := Format(format.Value, args[1:]...)
+	s, err := Format(string(format), args[1:]...)
 	if err != nil {
 		return nil, err
 	}
-	return &String{Value: s}, nil
+	return String(s), nil
 }
 
 func builtinCopy(args ...Object) (Object, error) {
@@ -428,7 +428,7 @@ func builtinString(args ...Object) (Object, error) {
 	if !(argsLen == 1 || argsLen == 2) {
 		return nil, ErrWrongNumArguments
 	}
-	if _, ok := args[0].(*String); ok {
+	if _, ok := args[0].(String); ok {
 		return args[0], nil
 	}
 	v, ok := ToString(args[0])
@@ -436,7 +436,7 @@ func builtinString(args ...Object) (Object, error) {
 		if len(v) > MaxStringLen {
 			return nil, ErrStringLimit
 		}
-		return &String{Value: v}, nil
+		return String(v), nil
 	}
 	if argsLen == 2 {
 		return args[1], nil
@@ -588,8 +588,8 @@ func builtinDelete(args ...Object) (Object, error) {
 	}
 	switch arg := args[0].(type) {
 	case *Map:
-		if key, ok := args[1].(*String); ok {
-			delete(arg.Value, key.Value)
+		if key, ok := args[1].(String); ok {
+			delete(arg.Value, string(key))
 			return UndefinedValue, nil
 		}
 		return nil, ErrInvalidArgumentType{

@@ -215,7 +215,7 @@ func (c *Compiler) Compile(node parser.Node) error {
 			return c.error(node, ErrStringLimit)
 		}
 		c.emit(node, parser.OpConstant,
-			c.addConstant(&String{Value: node.Value}))
+			c.addConstant(String(node.Value)))
 	case *parser.CharLit:
 		c.emit(node, parser.OpConstant,
 			c.addConstant(&Char{Value: node.Value}))
@@ -352,7 +352,7 @@ func (c *Compiler) Compile(node parser.Node) error {
 				return c.error(node, ErrStringLimit)
 			}
 			c.emit(node, parser.OpConstant,
-				c.addConstant(&String{Value: elt.Key}))
+				c.addConstant(String(elt.Key)))
 
 			// value
 			if err := c.Compile(elt.Value); err != nil {

@@ -297,7 +297,7 @@ func (v *VM) run() {
 			for i := v.sp - numElements; i < v.sp; i += 2 {
 				key := v.stack[i]
 				value := v.stack[i+1]
-				kv[key.(*String).Value] = value
+				kv[string(key.(String))] = value
 			}
 			v.sp -= numElements
 
@@ -460,8 +460,8 @@ func (v *VM) run() {
 				}
 				v.stack[v.sp] = val
 				v.sp++
-			case *String:
-				numElements := int64(len(left.Value))
+			case String:
+				numElements := int64(len(left))
 				var highIdx int64
 				if high == UndefinedValue {
 					highIdx = numElements
@@ -487,9 +487,9 @@ func (v *VM) run() {
 				} else if highIdx > numElements {
 					highIdx = numElements
 				}
-				var val Object = &String{
-					Value: left.Value[lowIdx:highIdx],
-				}
+				var val Object = String(
+					left[lowIdx:highIdx],
+				)
 				v.allocs--
 				if v.allocs == 0 {
 					v.err = ErrObjectAllocLimit

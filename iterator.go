@@ -150,7 +150,7 @@ func (i *MapIterator) Next() bool {
 // Key returns the key or index value of the current element.
 func (i *MapIterator) Key() Object {
 	k := i.k[i.i-1]
-	return &String{Value: k}
+	return String(k)
 }
 
 // Value returns the value of the current element.

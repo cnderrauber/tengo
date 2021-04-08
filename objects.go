@@ -370,7 +370,7 @@ func (m *BuiltinModule) AsImmutableMap(moduleName string) *ImmutableMap {
 	for k, v := range m.Attrs {
 		attrs[k] = v.Copy()
 	}
-	attrs["__module_name__"] = &String{Value: moduleName}
+	attrs["__module_name__"] = String(moduleName)
 	return &ImmutableMap{Value: attrs}
 }
 
@@ -1309,67 +1309,68 @@ func (o *ObjectPtr) Equals(x Object) bool {
 }
 
 // String represents a string value.
-type String struct {
-	ObjectImpl
-	Value   string
-	runeStr []rune
-}
+// type String struct {
+// 	ObjectImpl
+// 	Value   string
+// 	runeStr []rune
+// }
+type String string
 
 // TypeName returns the name of the type.
-func (o *String) TypeName() string {
+func (o String) TypeName() string {
 	return "string"
 }
 
-func (o *String) String() string {
-	return strconv.Quote(o.Value)
+func (o String) String() string {
+	return strconv.Quote(string(o))
 }
 
 // BinaryOp returns another object that is the result of a given binary
 // operator and a right-hand side object.
-func (o *String) BinaryOp(op token.Token, rhs Object) (Object, error) {
+func (o String) BinaryOp(op token.Token, rhs Object) (Object, error) {
 	switch op {
 	case token.Add:
 		switch rhs := rhs.(type) {
-		case *String:
-			if len(o.Value)+len(rhs.Value) > MaxStringLen {
+		case String:
+			if len(o)+len(rhs) > MaxStringLen {
 				return nil, ErrStringLimit
 			}
-			return &String{Value: o.Value + rhs.Value}, nil
+			return o + rhs, nil
 		default:
 			rhsStr := rhs.String()
-			if len(o.Value)+len(rhsStr) > MaxStringLen {
+			if len(o)+len(rhsStr) > MaxStringLen {
 				return nil, ErrStringLimit
 			}
-			return &String{Value: o.Value + rhsStr}, nil
+			return o + String(rhsStr), nil
 		}
 	case token.Less:
 		switch rhs := rhs.(type) {
-		case *String:
-			if o.Value < rhs.Value {
+		case String:
+			if o < rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		}
 	case token.LessEq:
 		switch rhs := rhs.(type) {
-		case *String:
-			if o.Value <= rhs.Value {
+		case String:
+			if o <= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		}
 	case token.Greater:
 		switch rhs := rhs.(type) {
-		case *String:
-			if o.Value > rhs.Value {
+		case String:
+			if o > rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		}
 	case token.GreaterEq:
 		switch rhs := rhs.(type) {
-		case *String:
-			if o.Value >= rhs.Value {
+		case String:
+			if o >= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
@@ -1378,59 +1379,55 @@ func (o *String) BinaryOp(op token.Token, rhs Object) (Object, error) {
 	return nil, ErrInvalidOperator
 }
 
+// Call takes an arbitrary number of arguments and returns a return value
+// and/or an error.
+func (o String) Call(_ ...Object) (ret Object, err error) {
+	return nil, nil
+}
+
+// CanCall returns whether the Object can be Called.
+func (o String) CanCall() bool {
+	return false
+}
+
+// IndexSet sets an element at a given index.
+func (o String) IndexSet(_, _ Object) (err error) {
+	return ErrNotIndexAssignable
+}
+
 // IsFalsy returns true if the value of the type is falsy.
-func (o *String) IsFalsy() bool {
-	return len(o.Value) == 0
+func (o String) IsFalsy() bool {
+	return len(o) == 0
 }
 
 // Copy returns a copy of the type.
-func (o *String) Copy() Object {
-	return &String{Value: o.Value}
+func (o String) Copy() Object {
+	return o
 }
 
 // Equals returns true if the value of the type is equal to the value of
 // another object.
-func (o *String) Equals(x Object) bool {
-	t, ok := x.(*String)
+func (o String) Equals(x Object) bool {
+	t, ok := x.(String)
 	if !ok {
 		return false
 	}
-	return o.Value == t.Value
+	return o == t
 }
 
 // IndexGet returns a character at a given index.
-func (o *String) IndexGet(index Object) (res Object, err error) {
-	intIdx, ok := index.(*Int)
-	if !ok {
-		err = ErrInvalidIndexType
-		return
-	}
-	idxVal := int(intIdx.Value)
-	if o.runeStr == nil {
-		o.runeStr = []rune(o.Value)
-	}
-	if idxVal < 0 || idxVal >= len(o.runeStr) {
-		res = UndefinedValue
-		return
-	}
-	res = &Char{Value: o.runeStr[idxVal]}
-	return
+func (o String) IndexGet(index Object) (res Object, err error) {
+	return nil, ErrNotIndexable
 }
 
-// Iterate creates a string iterator.
-func (o *String) Iterate() Iterator {
-	if o.runeStr == nil {
-		o.runeStr = []rune(o.Value)
-	}
-	return &StringIterator{
-		v: o.runeStr,
-		l: len(o.runeStr),
-	}
+// Iterate returns an iterator.
+func (o String) Iterate() Iterator {
+	return nil
 }
 
 // CanIterate returns whether the Object can be Iterated.
-func (o *String) CanIterate() bool {
-	return true
+func (o String) CanIterate() bool {
+	return false
 }
 
 // Time represents a time value.

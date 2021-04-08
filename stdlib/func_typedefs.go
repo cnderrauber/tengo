@@ -116,7 +116,7 @@ func FuncARS(fn func() string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }
 
@@ -134,7 +134,7 @@ func FuncARSE(fn func() (string, error)) tengo.CallableFunc {
 		if len(res) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: res}, nil
+		return tengo.String(res), nil
 	}
 }
 
@@ -179,7 +179,7 @@ func FuncARSs(fn func() []string) tengo.CallableFunc {
 			if len(elem) > tengo.MaxStringLen {
 				return nil, tengo.ErrStringLimit
 			}
-			arr.Value = append(arr.Value, &tengo.String{Value: elem})
+			arr.Value = append(arr.Value, tengo.String(elem))
 		}
 		return arr, nil
 	}
@@ -457,7 +457,7 @@ func FuncASRS(fn func(string) string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }
 
@@ -482,7 +482,7 @@ func FuncASRSs(fn func(string) []string) tengo.CallableFunc {
 			if len(elem) > tengo.MaxStringLen {
 				return nil, tengo.ErrStringLimit
 			}
-			arr.Value = append(arr.Value, &tengo.String{Value: elem})
+			arr.Value = append(arr.Value, tengo.String(elem))
 		}
 		return arr, nil
 	}
@@ -511,7 +511,7 @@ func FuncASRSE(fn func(string) (string, error)) tengo.CallableFunc {
 		if len(res) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: res}, nil
+		return tengo.String(res), nil
 	}
 }
 
@@ -591,7 +591,7 @@ func FuncASSRSs(fn func(string, string) []string) tengo.CallableFunc {
 			if len(res) > tengo.MaxStringLen {
 				return nil, tengo.ErrStringLimit
 			}
-			arr.Value = append(arr.Value, &tengo.String{Value: res})
+			arr.Value = append(arr.Value, tengo.String(res))
 		}
 		return arr, nil
 	}
@@ -633,7 +633,7 @@ func FuncASSIRSs(fn func(string, string, int) []string) tengo.CallableFunc {
 			if len(res) > tengo.MaxStringLen {
 				return nil, tengo.ErrStringLimit
 			}
-			arr.Value = append(arr.Value, &tengo.String{Value: res})
+			arr.Value = append(arr.Value, tengo.String(res))
 		}
 		return arr, nil
 	}
@@ -693,7 +693,7 @@ func FuncASSRS(fn func(string, string) string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }
 
@@ -779,7 +779,7 @@ func FuncASsSRS(fn func([]string, string) string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }
 
@@ -864,7 +864,7 @@ func FuncASIRS(fn func(string, int) string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }
 
@@ -942,7 +942,7 @@ func FuncAYRS(fn func([]byte) string) tengo.CallableFunc {
 			}
 		}
 		res := fn(y1)
-		return &tengo.String{Value: res}, nil
+		return tengo.String(res), nil
 	}
 }
 
@@ -1019,7 +1019,7 @@ func FuncAIRSsE(fn func(int) ([]string, error)) tengo.CallableFunc {
 			if len(r) > tengo.MaxStringLen {
 				return nil, tengo.ErrStringLimit
 			}
-			arr.Value = append(arr.Value, &tengo.String{Value: r})
+			arr.Value = append(arr.Value, tengo.String(r))
 		}
 		return arr, nil
 	}
@@ -1044,6 +1044,6 @@ func FuncAIRS(fn func(int) string) tengo.CallableFunc {
 		if len(s) > tengo.MaxStringLen {
 			return nil, tengo.ErrStringLimit
 		}
-		return &tengo.String{Value: s}, nil
+		return tengo.String(s), nil
 	}
 }

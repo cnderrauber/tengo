@@ -138,8 +138,8 @@ func Equal(
 		Equal(t, expected.Value, actual.(*tengo.Int).Value, msg...)
 	case *tengo.Float:
 		Equal(t, expected.Value, actual.(*tengo.Float).Value, msg...)
-	case *tengo.String:
-		Equal(t, expected.Value, actual.(*tengo.String).Value, msg...)
+	case tengo.String:
+		Equal(t, expected, actual.(tengo.String), msg...)
 	case *tengo.Char:
 		Equal(t, expected.Value, actual.(*tengo.Char).Value, msg...)
 	case *tengo.Bool:
