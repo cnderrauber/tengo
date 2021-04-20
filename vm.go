@@ -203,8 +203,8 @@ func (v *VM) run() {
 				}
 				v.stack[v.sp] = res
 				v.sp++
-			case *Float:
-				var res Object = &Float{Value: -x.Value}
+			case Float:
+				var res Object = Float(-x)
 				v.allocs--
 				if v.allocs == 0 {
 					v.err = ErrObjectAllocLimit

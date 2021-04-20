@@ -163,7 +163,7 @@ func builtinIsFloat(args ...Object) (Object, error) {
 	if len(args) != 1 {
 		return nil, ErrWrongNumArguments
 	}
-	if _, ok := args[0].(*Float); ok {
+	if _, ok := args[0].(Float); ok {
 		return TrueValue, nil
 	}
 	return FalseValue, nil
@@ -467,12 +467,12 @@ func builtinFloat(args ...Object) (Object, error) {
 	if !(argsLen == 1 || argsLen == 2) {
 		return nil, ErrWrongNumArguments
 	}
-	if _, ok := args[0].(*Float); ok {
+	if _, ok := args[0].(Float); ok {
 		return args[0], nil
 	}
 	v, ok := ToFloat64(args[0])
 	if ok {
-		return &Float{Value: v}, nil
+		return Float(v), nil
 	}
 	if argsLen == 2 {
 		return args[1], nil

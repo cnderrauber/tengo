@@ -665,67 +665,68 @@ func (o *Error) IndexGet(index Object) (res Object, err error) {
 }
 
 // Float represents a floating point number value.
-type Float struct {
-	ObjectImpl
-	Value float64
-}
+//type Float struct {
+//	ObjectImpl
+//	Value float64
+//}
+type Float float64
 
-func (o *Float) String() string {
-	return strconv.FormatFloat(o.Value, 'f', -1, 64)
+func (o Float) String() string {
+	return strconv.FormatFloat(float64(o), 'f', -1, 64)
 }
 
 // TypeName returns the name of the type.
-func (o *Float) TypeName() string {
+func (o Float) TypeName() string {
 	return "float"
 }
 
 // BinaryOp returns another object that is the result of a given binary
 // operator and a right-hand side object.
-func (o *Float) BinaryOp(op token.Token, rhs Object) (Object, error) {
+func (o Float) BinaryOp(op token.Token, rhs Object) (Object, error) {
 	switch rhs := rhs.(type) {
-	case *Float:
+	case Float:
 		switch op {
 		case token.Add:
-			r := o.Value + rhs.Value
-			if r == o.Value {
+			r := o + rhs
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Sub:
-			r := o.Value - rhs.Value
-			if r == o.Value {
+			r := o - rhs
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Mul:
-			r := o.Value * rhs.Value
-			if r == o.Value {
+			r := o * rhs
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Quo:
-			r := o.Value / rhs.Value
-			if r == o.Value {
+			r := o / rhs
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Less:
-			if o.Value < rhs.Value {
+			if o < rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.Greater:
-			if o.Value > rhs.Value {
+			if o > rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.LessEq:
-			if o.Value <= rhs.Value {
+			if o <= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.GreaterEq:
-			if o.Value >= rhs.Value {
+			if o >= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
@@ -733,46 +734,46 @@ func (o *Float) BinaryOp(op token.Token, rhs Object) (Object, error) {
 	case *Int:
 		switch op {
 		case token.Add:
-			r := o.Value + float64(rhs.Value)
-			if r == o.Value {
+			r := o + Float(rhs.Value)
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Sub:
-			r := o.Value - float64(rhs.Value)
-			if r == o.Value {
+			r := o - Float(rhs.Value)
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Mul:
-			r := o.Value * float64(rhs.Value)
-			if r == o.Value {
+			r := o * Float(rhs.Value)
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Quo:
-			r := o.Value / float64(rhs.Value)
-			if r == o.Value {
+			r := o / Float(rhs.Value)
+			if r == o {
 				return o, nil
 			}
-			return &Float{Value: r}, nil
+			return r, nil
 		case token.Less:
-			if o.Value < float64(rhs.Value) {
+			if o < Float(rhs.Value) {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.Greater:
-			if o.Value > float64(rhs.Value) {
+			if o > Float(rhs.Value) {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.LessEq:
-			if o.Value <= float64(rhs.Value) {
+			if o <= Float(rhs.Value) {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.GreaterEq:
-			if o.Value >= float64(rhs.Value) {
+			if o >= Float(rhs.Value) {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
@@ -782,23 +783,54 @@ func (o *Float) BinaryOp(op token.Token, rhs Object) (Object, error) {
 }
 
 // Copy returns a copy of the type.
-func (o *Float) Copy() Object {
-	return &Float{Value: o.Value}
+func (o Float) Copy() Object {
+	return Float(o)
 }
 
 // IsFalsy returns true if the value of the type is falsy.
-func (o *Float) IsFalsy() bool {
-	return math.IsNaN(o.Value)
+func (o Float) IsFalsy() bool {
+	return math.IsNaN(float64(o))
 }
 
 // Equals returns true if the value of the type is equal to the value of
 // another object.
-func (o *Float) Equals(x Object) bool {
-	t, ok := x.(*Float)
+func (o Float) Equals(x Object) bool {
+	t, ok := x.(Float)
 	if !ok {
 		return false
 	}
-	return o.Value == t.Value
+	return o == t
+}
+
+// Call takes an arbitrary number of arguments and returns a return value
+// and/or an error.
+func (o Float) Call(_ ...Object) (ret Object, err error) {
+	return nil, nil
+}
+
+// CanCall returns whether the Object can be Called.
+func (o Float) CanCall() bool {
+	return false
+}
+
+// IndexSet sets an element at a given index.
+func (o Float) IndexSet(_, _ Object) (err error) {
+	return ErrNotIndexAssignable
+}
+
+// IndexGet returns a character at a given index.
+func (o Float) IndexGet(index Object) (res Object, err error) {
+	return nil, ErrNotIndexable
+}
+
+// Iterate returns an iterator.
+func (o Float) Iterate() Iterator {
+	return nil
+}
+
+// CanIterate returns whether the Object can be Iterated.
+func (o Float) CanIterate() bool {
+	return false
 }
 
 // ImmutableArray represents an immutable array of objects.
@@ -1095,33 +1127,33 @@ func (o *Int) BinaryOp(op token.Token, rhs Object) (Object, error) {
 			}
 			return FalseValue, nil
 		}
-	case *Float:
+	case Float:
 		switch op {
 		case token.Add:
-			return &Float{Value: float64(o.Value) + rhs.Value}, nil
+			return Float(o.Value) + rhs, nil
 		case token.Sub:
-			return &Float{Value: float64(o.Value) - rhs.Value}, nil
+			return Float(o.Value) - rhs, nil
 		case token.Mul:
-			return &Float{Value: float64(o.Value) * rhs.Value}, nil
+			return Float(o.Value) * rhs, nil
 		case token.Quo:
-			return &Float{Value: float64(o.Value) / rhs.Value}, nil
+			return Float(o.Value) / rhs, nil
 		case token.Less:
-			if float64(o.Value) < rhs.Value {
+			if Float(o.Value) < rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.Greater:
-			if float64(o.Value) > rhs.Value {
+			if Float(o.Value) > rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.LessEq:
-			if float64(o.Value) <= rhs.Value {
+			if Float(o.Value) <= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil
 		case token.GreaterEq:
-			if float64(o.Value) >= rhs.Value {
+			if Float(o.Value) >= rhs {
 				return TrueValue, nil
 			}
 			return FalseValue, nil

@@ -203,7 +203,7 @@ func (c *Compiler) Compile(node parser.Node) error {
 			c.addConstant(&Int{Value: node.Value}))
 	case *parser.FloatLit:
 		c.emit(node, parser.OpConstant,
-			c.addConstant(&Float{Value: node.Value}))
+			c.addConstant(Float(node.Value)))
 	case *parser.BoolLit:
 		if node.Value {
 			c.emit(node, parser.OpTrue)

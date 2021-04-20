@@ -79,8 +79,8 @@ func ToInt(o Object) (v int, ok bool) {
 	case *Int:
 		v = int(o.Value)
 		ok = true
-	case *Float:
-		v = int(o.Value)
+	case Float:
+		v = int(o)
 		ok = true
 	case *Char:
 		v = int(o.Value)
@@ -106,8 +106,8 @@ func ToInt64(o Object) (v int64, ok bool) {
 	case *Int:
 		v = o.Value
 		ok = true
-	case *Float:
-		v = int64(o.Value)
+	case Float:
+		v = int64(o)
 		ok = true
 	case *Char:
 		v = int64(o.Value)
@@ -133,8 +133,8 @@ func ToFloat64(o Object) (v float64, ok bool) {
 	case *Int:
 		v = float64(o.Value)
 		ok = true
-	case *Float:
-		v = o.Value
+	case Float:
+		v = float64(o)
 		ok = true
 	case String:
 		c, err := strconv.ParseFloat(string(o), 64)
@@ -199,8 +199,8 @@ func ToInterface(o Object) (res interface{}) {
 		res = o.Value
 	case String:
 		res = o
-	case *Float:
-		res = o.Value
+	case Float:
+		res = o
 	case *Bool:
 		res = o == TrueValue
 	case *Char:
@@ -263,7 +263,7 @@ func FromInterface(v interface{}) (Object, error) {
 	case byte:
 		return &Char{Value: rune(v)}, nil
 	case float64:
-		return &Float{Value: v}, nil
+		return Float(v), nil
 	case []byte:
 		if len(v) > MaxBytesLen {
 			return nil, ErrBytesLimit

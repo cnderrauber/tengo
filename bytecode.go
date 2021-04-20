@@ -144,12 +144,12 @@ func (b *Bytecode) RemoveDuplicates() {
 				indexMap[curIdx] = newIdx
 				deduped = append(deduped, c)
 			}
-		case *Float:
-			if newIdx, ok := floats[c.Value]; ok {
+		case Float:
+			if newIdx, ok := floats[float64(c)]; ok {
 				indexMap[curIdx] = newIdx
 			} else {
 				newIdx = len(deduped)
-				floats[c.Value] = newIdx
+				floats[float64(c)] = newIdx
 				indexMap[curIdx] = newIdx
 				deduped = append(deduped, c)
 			}
@@ -286,7 +286,7 @@ func init() {
 	gob.Register(&Char{})
 	gob.Register(&CompiledFunction{})
 	gob.Register(&Error{})
-	gob.Register(&Float{})
+	gob.Register(Float(0))
 	gob.Register(&ImmutableArray{})
 	gob.Register(&ImmutableMap{})
 	gob.Register(&Int{})
