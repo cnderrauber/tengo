@@ -795,11 +795,14 @@ func (o Float) IsFalsy() bool {
 // Equals returns true if the value of the type is equal to the value of
 // another object.
 func (o Float) Equals(x Object) bool {
-	t, ok := x.(Float)
-	if !ok {
+	switch xv := x.(type) {
+	case *Int:
+		return o == Float(xv.Value)
+	case Float:
+		return o == xv
+	default:
 		return false
 	}
-	return o == t
 }
 
 // Call takes an arbitrary number of arguments and returns a return value
@@ -1202,11 +1205,14 @@ func (o *Int) IsFalsy() bool {
 // Equals returns true if the value of the type is equal to the value of
 // another object.
 func (o *Int) Equals(x Object) bool {
-	t, ok := x.(*Int)
-	if !ok {
+	switch xv := x.(type) {
+	case *Int:
+		return o.Value == xv.Value
+	case Float:
+		return Float(o.Value) ==  xv
+	default:
 		return false
 	}
-	return o.Value == t.Value
 }
 
 // Map represents a map of objects.
